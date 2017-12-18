@@ -1,5 +1,4 @@
 var ftpd = require('./');
-var fs = require('fs');
 var path = require('path');
 var keyFile;
 var certFile;
@@ -9,6 +8,15 @@ var options = {
   port: process.env.PORT || 7002,
   tls: null,
 };
+
+// var S3FS = require('s3fs');
+// var s3Options = {
+//   region: 'us-east-1'
+// };
+var bucketName = 'sftpgateway-i-test-bucket-custom';
+// var fs = new S3FS(bucketName, s3Options);
+
+var fs = require('fs');
 
 if (process.env.KEY_FILE && process.env.CERT_FILE) {
   console.log('Running as FTPS server');
@@ -23,7 +31,7 @@ if (process.env.KEY_FILE && process.env.CERT_FILE) {
     cert: fs.readFileSync(certFile),
     ca: !process.env.CA_FILES ? null : process.env.CA_FILES
       .split(':')
-      .map(function(f) {
+      .map(function (f) {
         return fs.readFileSync(f);
       }),
   };
@@ -39,26 +47,28 @@ server = new ftpd.FtpServer(options.host, {
   getInitialCwd: function() {
     return '/';
   },
-  getRoot: function() {
-    return process.cwd();
-  },
+  // getRoot: function() {
+  //   return process.cwd();
+  // },
+  // getInitialCwd: function() { return bucketName; },
+  getRoot: function() { return '/'; },
   pasvPortRangeStart: 1025,
   pasvPortRangeEnd: 1050,
   tlsOptions: options.tls,
   allowUnauthorizedTls: true,
-  useWriteFile: false,
+  useWriteFile: true, // Keep this true
   useReadFile: false,
   uploadMaxSlurpSize: 7000, // N/A unless 'useWriteFile' is true.
 });
 
-server.on('error', function(error) {
+server.on('error', function (error) {
   console.log('FTP Server error:', error);
 });
 
-server.on('client:connected', function(connection) {
+server.on('client:connected', function (connection) {
   var username = null;
   console.log('client connected: ' + connection.remoteAddress);
-  connection.on('command:user', function(user, success, failure) {
+  connection.on('command:user', function (user, success, failure) {
     if (user) {
       username = user;
       success();
@@ -67,7 +77,7 @@ server.on('client:connected', function(connection) {
     }
   });
 
-  connection.on('command:pass', function(pass, success, failure) {
+  connection.on('command:pass', function (pass, success, failure) {
     if (pass) {
       success(username);
     } else {
@@ -78,4 +88,4 @@ server.on('client:connected', function(connection) {
 
 server.debugging = 4;
 server.listen(options.port);
-console.log('Listening on port ' + options.port);
+console.log('Listening on port ' + options.host + ':' + options.port);
