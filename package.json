@@ -111,9 +111,9 @@
     "url": "https://github.com/sstur/nodeftpd/issues"
   },
   "dependencies": {
+    "@factoryfour/stat-mode": "^0.2.2",
     "dateformat": "1.0.7-1.2.3",
-    "s3fs": "^2.5.0",
-    "stat-mode": "^0.2.1"
+    "s3fs": "^2.5.0"
   },
   "devDependencies": {
     "async": "~0.1.15",
