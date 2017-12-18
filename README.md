@@ -12,6 +12,9 @@
 - [File System Abstraction](#filesystem-abstraction)
 
 
+## TO DO:
+- Doesn't work if directory doesn't exist with a file in it. Check that before and populate, or fix it.
+
 ## Introduction
 
 This is a simple but very configurable FTP server. Notable features include:
