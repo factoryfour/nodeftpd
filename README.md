@@ -13,6 +13,7 @@
 
 
 ## TO DO:
+- Pass in bucket name on construction.
 - Doesn't work if directory doesn't exist with a file in it. Check that before and populate, or fix it.
 
 ## Introduction
