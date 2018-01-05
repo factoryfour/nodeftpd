@@ -5,7 +5,7 @@ var certFile;
 var server;
 var options = {
   host: process.env.IP || '127.0.0.1',
-  port: process.env.PORT || 7002,
+  port: process.env.PORT || 22,
   tls: null,
 };
 
